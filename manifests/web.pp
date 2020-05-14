@@ -341,11 +341,13 @@ class zabbix::web (
     default: {
       $zabbix_web_package = 'zabbix-web'
 
-      package { "zabbix-web-${db}":
-        ensure  => $zabbix_package_state,
-        before  => Package[$zabbix_web_package],
-        require => Class['zabbix::repo'],
-        tag     => 'zabbix',
+      if versioncmp($zabbix_version, '5.0') < 0 {
+        package { "zabbix-web-${db}":
+          ensure  => $zabbix_package_state,
+          before  => Package[$zabbix_web_package],
+          require => Class['zabbix::repo'],
+          tag     => 'zabbix',
+        }
       }
     }
   } # END case $facts['os']['name']
