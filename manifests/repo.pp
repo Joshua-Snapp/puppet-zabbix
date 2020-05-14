@@ -60,6 +60,12 @@ class zabbix::repo (
           $gpgkey_zabbix = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
           $gpgkey_nonsupported = $gpgkey_zabbix
         }
+        elsif versioncmp($zabbix_version, '5.0') >= 0 {
+          $gpgkey_zabbix = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591'
+          $gpgkey_zabbix_frontend = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591'
+          $gpgkey_zabbix_debuginfo = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591'
+          $gpgkey_nonsupported = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
+        }
         else {
           $gpgkey_zabbix = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591'
           $gpgkey_nonsupported = 'https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-79EA5ED4'
@@ -91,6 +97,28 @@ class zabbix::repo (
           gpgcheck => '1',
           gpgkey   => $gpgkey_nonsupported,
           priority => '1',
+        }
+
+        if versioncmp($zabbix_version, '5.0') >= 0 {
+          yumrepo { 'zabbix-frontend':
+            name     => "Zabbix_frontend_${majorrelease}_${facts['os']['architecture']}",
+            descr    => "Zabbix_frontend_${majorrelease}_${facts['os']['architecture']}",
+            baseurl  => "${_repo_location}/frontend",
+            gpgcheck => '1',
+            gpgkey   => $gpgkey_zabbix_frontend,
+            priority => '1',
+            enabled  => '1',
+          }
+
+          yumrepo { 'zabbix-debuginfo':
+            name     => "Zabbix_debuginfo_${majorrelease}_${facts['os']['architecture']}",
+            descr    => "Zabbix_debuginfo_${majorrelease}_${facts['os']['architecture']}",
+            baseurl  => "${_repo_location}/debuginfo",
+            gpgcheck => '1',
+            gpgkey   => $gpgkey_zabbix_debuginfo,
+            priority => '1',
+            enabled  => '0',
+          }
         }
 
       }
