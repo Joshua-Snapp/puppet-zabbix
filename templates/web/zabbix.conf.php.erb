@@ -15,6 +15,10 @@ $DB['DATABASE'] = '<%= @database_name %>';
 $DB['USER']     = '<%= @database_user %>';
 $DB['PASSWORD'] = '<%= @database_password %>';
 
+<% if @zabbix_version >= '5.0' -%>
+$DB['DOUBLE_IEEE754'] = 'true';
+<% end -%>
+
 // SCHEMA is relevant only for IBM_DB2 database
 $DB['SCHEMA'] = '';
 
