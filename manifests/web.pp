@@ -333,7 +333,7 @@ class zabbix::web (
         ensure => $zabbix_package_state,
         before => [
           Package[$zabbix_web_package],
-          File['/etc/zabbix/web/zabbix.conf.php'],
+          Concat['/etc/zabbix/web/zabbix.conf.php'],
         ],
       }
     }
@@ -359,18 +359,23 @@ class zabbix::web (
 
   package { $zabbix_web_package:
     ensure  => $zabbix_package_state,
-    before  => File['/etc/zabbix/web/zabbix.conf.php'],
+    before  => Concat['/etc/zabbix/web/zabbix.conf.php'],
     require => Class['zabbix::repo'],
     tag     => 'zabbix',
   }
 
   # Webinterface config file
-  file { '/etc/zabbix/web/zabbix.conf.php':
-    ensure  => file,
+  concat { '/etc/zabbix/web/zabbix.conf.php':
+    ensure  => present,
     owner   => $web_config_owner,
     group   => $web_config_group,
     mode    => '0640',
     replace => true,
+  }
+
+  concat_fragment { 'required_webinterface_config':
+    target  => '/etc/zabbix/web/zabbix.conf.php',
+    order   => '01',
     content => template('zabbix/web/zabbix.conf.php.erb'),
   }
 
